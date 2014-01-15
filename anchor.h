@@ -18,7 +18,10 @@ public:
 	int getId();
 
 	QList<QVariant> getParameters();
+	QVariant getParameter(int index);
 	QList<QString> getParameterNames();
+	QString getParameterName(int index);
+
 	void setParameters(QList<QVariant> parameters, QList<QString> parameterNames);
 
 	QMatrix4x4 getNoScalingMatrix();

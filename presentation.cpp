@@ -63,9 +63,11 @@ Presentation::Presentation(int width, int height, QWidget *parent) : QWidget(par
 	this->maximizedIntegratedView = false;
 	this->currentViewIndex = -1;
 
+	this->flagViewChanged = false;
 	this->ivInvalid = true;
 	this->animationWanted = false;
 	this->autoActivateSelections = false;
+	this->autoActivateSnapshots = false;
 
 	this->anchors2D = false;
 }
@@ -1490,16 +1492,79 @@ void Presentation::defferedUpdate()
 	emit updated();
 }
 
+//mark that the view has changed. next time the current parameters change (setCurrentParameter{s}()) and flagViewChanged is true, changeView() is called (this is done by checkIfViewChanged() method).
 void Presentation::viewChanged()
 {
-	this->lastActiveAnchor = 0;
-	this->activeAnchor = 0;
-	this->maximizedIntegratedView = false;
+	this->flagViewChanged = true;
+}
+
+void Presentation::checkIfViewChanged()
+{
+	if (this->flagViewChanged)
+	{
+		this->flagViewChanged = false;
+		this->changeView();
+	}
+}
+
+//apply the operations when the view changes
+void Presentation::changeView()
+{
+	int matchedSnapshot = -1;
+
+	if (this->autoActivateSnapshots)
+	{
+		for (int i = 0; i < this->anchors.size(); i++)
+		{
+			bool match = true;
+			for (int j = 0; j < qMin(this->currentParameters.size(), this->anchors[i]->getParameters().size()); j++)
+			{
+				qDebug() << "matching" << this->anchors[i]->getParameterName(j) << ":" << this->currentParameters[j] << this->anchors[i]->getParameter(j);
+				if (!PRSUtil::equal(this->currentParameters[j], this->anchors[i]->getParameter(j), this->anchors[i]->getParameterName(j)))
+				{
+					qDebug() << "nope";
+					match = false;
+					break;
+				}
+				qDebug() << "yep";
+			}
+
+			if (match)
+			{
+				matchedSnapshot = i;
+				break;
+			}
+		}
+	}
+
+	qDebug() << "match:" << matchedSnapshot;
+
+	if (matchedSnapshot >= 0)
+	{
+		//auto-select the contextual snapshot
+		this->lastActiveAnchor = this->activeAnchor;
+		this->activeAnchor = this->anchors[matchedSnapshot];
+		this->thumbnailAnchor = 0;
+
+		if (this->autoActivateSelections)
+		{
+			this->beginSelection();
+			this->selectAllSelections();
+			this->endSelection();
+		}
+	}
+	else
+	{
+		//deselect selected snapshot
+		this->lastActiveAnchor = 0;
+		this->activeAnchor = 0;
+		this->maximizedIntegratedView = false;
+
+		this->unselectSelections();
+	}
 
 	this->slideTimer->stop();
 	this->maximizeTimer->stop();
-
-	this->unselectSelections();
 }
 
 void Presentation::unselectSelections()
@@ -2627,6 +2692,16 @@ void Presentation::setAutoActivateSelections(bool autoActivateSelections)
 bool Presentation::isAutoActivateSelections()
 {
 	return this->autoActivateSelections;
+}
+
+void Presentation::setAutoActivateSnapshots(bool autoActivateSnapshots)
+{
+	this->autoActivateSnapshots = autoActivateSnapshots;
+}
+
+bool Presentation::isAutoActivateSnapshots()
+{
+	return this->autoActivateSnapshots;
 }
 
 

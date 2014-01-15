@@ -32,10 +32,22 @@ public:
 	explicit Presentation(int width, int height, QWidget * parent = 0);
 	~Presentation();
 
-	inline QString getVersion() { return "0.9.2"; }
+	inline QString getVersion() { return "0.9.3"; }
 
-	inline void setCurrentParameter(QVariant parameter) { QList<QVariant> parameters; parameters << parameter; this->currentParameters = parameters; }
-	inline void setCurrentParameters(QList<QVariant> parameters) { this->currentParameters = parameters; }
+	inline void setCurrentParameter(QVariant parameter)
+	{
+		QList<QVariant> parameters;
+		parameters << parameter;
+		this->currentParameters = parameters;
+
+		this->checkIfViewChanged();
+	}
+	inline void setCurrentParameters(QList<QVariant> parameters)
+	{
+		this->currentParameters = parameters;
+
+		this->checkIfViewChanged();
+	}
 
 	void reset();
 
@@ -113,6 +125,9 @@ public:
 
 	void setAutoActivateSelections(bool autoActivateSelections);
 	bool isAutoActivateSelections();
+
+	void setAutoActivateSnapshots(bool autoActivateSnapshots);
+	bool isAutoActivateSnapshots();
 
 	bool isMaximizedIntegratedView();
 
@@ -260,10 +275,13 @@ protected:
 	bool ivInvalid; //if true, integrated views will be updated next time
 	bool animationWanted;
 	bool autoActivateSelections; //automatically activate all selections when switched to an anchor
+	bool autoActivateSnapshots; //automatically activate contextual snapshots, if its parameters match the current parameters
 
 	bool anchors2D;
 
 	bool integratedViewsVisible;
+
+	bool flagViewChanged;
 
 signals:
 	void parametersChanged(QList<QVariant>);
@@ -281,6 +299,8 @@ public slots:
 	void animateSlide();
 	void animateMaximize();
 	void viewChanged();
+	void checkIfViewChanged();
+	void changeView();
 	void renderSelectionsToActiveAnchorScreenshot();
 	void defferedUpdate();
 	void displayThumbnail();

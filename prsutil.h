@@ -65,6 +65,9 @@ public:
 	static QRect mix(QRect a0, QRect a1, qreal x);
 	static QVariant mix(QVariant a0, QVariant a1, qreal x);
 
+	//comparing methods
+	static bool equal(QVariant a0, QVariant a1, QString parameterName = "");
+
 	//other methods
 	static QRectF fitToSize(QSizeF size, QSizeF boundingSize);
 	static QRectF fitRatioToRect(QSizeF ratio, QRectF boundingRect);

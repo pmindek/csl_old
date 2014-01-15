@@ -67,9 +67,19 @@ QList<QVariant> Anchor::getParameters()
 	return this->parameters;
 }
 
+QVariant Anchor::getParameter(int index)
+{
+	return this->parameters[index];
+}
+
 QList<QString> Anchor::getParameterNames()
 {
 	return this->parameterNames;
+}
+
+QString Anchor::getParameterName(int index)
+{
+	return this->parameterNames[index];
 }
 
 void Anchor::setParameters(QList<QVariant> parameters, QList<QString> parameterNames)

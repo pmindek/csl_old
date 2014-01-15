@@ -245,6 +245,31 @@ QVariant PRSUtil::mix(QVariant a0, QVariant a1, qreal x)
 	return result;
 }
 
+bool PRSUtil::equal(QVariant a0, QVariant a1, QString parameterName)
+{
+	if (a0.type() != a1.type())
+		return false;
+
+	bool result = false;
+
+	switch (a0.type())
+	{
+	default:
+	case QVariant::Double:
+	case QVariant::Int:
+	case QVariant::Bool:
+	case QVariant::Vector2D:
+	case QVariant::Vector3D:
+	case QVariant::Vector4D:
+	case QVariant::Matrix4x4:
+	case QVariant::Rect:
+		result = a0 == a1;
+		break;
+	}
+
+	return result;
+}
+
 QRectF PRSUtil::fitToSize(QSizeF size, QSizeF boundingSize)
 {
 	qreal ratio;
