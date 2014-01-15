@@ -1,0 +1,28 @@
+#extension GL_EXT_gpu_shader4 : enable
+
+varying vec4 color;
+uniform sampler2D texture;
+void main(void)
+{
+	if (int(gl_FragCoord.x) % 16 < 8 ^^ int(gl_FragCoord.y) % 16 < 8)
+		gl_FragColor = vec4(1.0, 1.0, 1.0, texture2D(texture, gl_TexCoord[0].xy).r * color.a);
+	else
+		gl_FragColor = vec4(1.0, 1.0, 1.0, 0.85 * texture2D(texture, gl_TexCoord[0].xy).r * color.a);
+
+	/*float a;
+
+	a =
+	max(
+		abs(texture2D(texture, gl_TexCoord[0].xy - vec2(1.0 / 640.0, 0)).r - texture2D(texture, gl_TexCoord[0].xy + vec2(1.0 / 640.0, 0)).r),
+		abs(texture2D(texture, gl_TexCoord[0].xy - vec2(0, 1.0 / 480.0)).r - texture2D(texture, gl_TexCoord[0].xy + vec2(0, 1.0 / 480.0)).r)
+	);
+
+	gl_FragColor = vec4(0.7, 0.0, 0.0, a * color.a * 2.0);*/
+
+
+
+	/*if (int(gl_FragCoord.x) % 16 < 8 ^^ int(gl_FragCoord.y) % 16 < 8)
+		gl_FragColor = vec4(1.0, 1.0, 1.0, texture2D(texture, gl_TexCoord[0].xy).r * color.a);
+	else
+		gl_FragColor = vec4(0.0, 0.0, 0.0, texture2D(texture, gl_TexCoord[0].xy).r * color.a);*/
+}

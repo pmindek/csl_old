@@ -1,0 +1,50 @@
+#extension GL_EXT_gpu_shader4 : enable
+
+varying vec4 color;
+uniform sampler2D texture;
+uniform sampler2D preview;
+
+uniform int showPreview;
+
+uniform vec2 size;
+
+void main(void)
+{
+	/*if (int(gl_FragCoord.x) % 16 < 8 ^^ int(gl_FragCoord.y) % 16 < 8)
+		gl_FragColor = vec4(1.0, 1.0, 1.0, texture2D(texture, gl_TexCoord[0].xy).r * color.a);
+	else
+		gl_FragColor = vec4(1.0, 1.0, 1.0, 0.85 * texture2D(texture, gl_TexCoord[0].xy).r * color.a);*/
+
+	float a;
+
+	float r = 1.0 + color.a * 2.0;
+
+	a =
+	max(
+		abs(texture2D(texture, gl_TexCoord[0].xy - vec2(r / size.x, 0)).r - texture2D(texture, gl_TexCoord[0].xy + vec2(r / size.x, 0)).r),
+		abs(texture2D(texture, gl_TexCoord[0].xy - vec2(0, r / size.y)).r - texture2D(texture, gl_TexCoord[0].xy + vec2(0, r / size.y)).r)
+	);
+
+	vec4 borderColor = vec4(1.0, 0.6, 0.0, a * color.a);
+
+	if (showPreview > 0)
+	{
+		vec4 previewColor = texture2D(preview, gl_TexCoord[0].xy);
+		vec4 maskColor = texture2D(texture, gl_TexCoord[0].xy);
+
+		previewColor.a = maskColor;
+
+		gl_FragColor = mix(previewColor, borderColor, borderColor.a);
+	}
+	else
+	{
+		gl_FragColor = borderColor;
+	}
+
+
+
+	/*if (int(gl_FragCoord.x) % 16 < 8 ^^ int(gl_FragCoord.y) % 16 < 8)
+		gl_FragColor = vec4(1.0, 1.0, 1.0, texture2D(texture, gl_TexCoord[0].xy).r * color.a);
+	else
+		gl_FragColor = vec4(0.0, 0.0, 0.0, texture2D(texture, gl_TexCoord[0].xy).r * color.a);*/
+}

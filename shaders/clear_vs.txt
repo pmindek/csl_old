@@ -1,0 +1,7 @@
+varying out vec4 texCoord0;
+
+void main(void)
+{
+	texCoord0 = gl_MultiTexCoord0;
+	gl_Position = ftransform();
+}

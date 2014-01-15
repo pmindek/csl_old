@@ -1,0 +1,25 @@
+#version 330
+#extension GL_ARB_gpu_shader5 : enable
+#extension GL_EXT_gpu_shader4 : enable
+#extension GL_EXT_shader_image_load_store : enable
+//#extension GL_EXT_texture_integer : enable
+
+uniform int PRSHistogramWidth;
+uniform int PRSHistogramHeight;
+coherent uniform layout(size1x32) uimage2D PRSHistogram;
+
+void main(void)
+{
+	for (int i = 0; i < PRSHistogramWidth; i++)
+	{
+		for (int j = 0; j < PRSHistogramHeight; j++)
+		{
+			//imageStore(PRSHistogram, ivec2(i, j), uvec4(255));
+			imageAtomicExchange(PRSHistogram, ivec2(i, j), 0);
+			//imageAtomicAdd(PRSHistogram, ivec2(i, j), i * 10000);
+		}
+	}
+
+	discard;
+	//gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+}

@@ -1,0 +1,32 @@
+#version 150
+#extension GL_EXT_shader_image_load_store : enable
+
+uniform layout(size4x32) image2D texture;
+uniform layout(size4x32) image2D memory;
+
+void main(void)
+{
+	vec4 loaded = imageLoad(texture, ivec2(0, 0));
+	int count = int(loaded.x);
+
+	vec4 color0 = imageLoad(texture, ivec2(1, 0));
+	vec4 color1 = imageLoad(texture, ivec2(count, 0));
+
+	vec2 a = color0.xy;
+	vec2 b = color1.xy;
+	vec2 x = gl_FragCoord.xy;
+
+	float l = length(x - a);
+	float r = length(a - b);
+	float d = r - l;
+
+	if (l <= r)
+	{
+		gl_FragColor = vec4(vec3(clamp(d, 0.0, 1.0)), 1.0);
+	}
+	else
+	{
+		gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
+	}
+
+}
