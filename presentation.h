@@ -16,6 +16,7 @@
 #include <QMouseEvent>
 #include <QWheelEvent>
 #include <QKeyEventTransition>
+#include <QEasingCurve>
 
 #include "anchor.h"
 #include "sketcher.h"
@@ -31,10 +32,10 @@ public:
 	explicit Presentation(int width, int height, QWidget * parent = 0);
 	~Presentation();
 
-	inline QString getVersion() { return "0.9.1"; }
+	inline QString getVersion() { return "0.9.2"; }
 
-	inline void setCurrentParameter(qreal parameter) { QList<qreal> parameters; parameters << parameter; this->currentParameters = parameters; }
-	inline void setCurrentParameters(QList<qreal> parameters) { this->currentParameters = parameters; }
+	inline void setCurrentParameter(QVariant parameter) { QList<QVariant> parameters; parameters << parameter; this->currentParameters = parameters; }
+	inline void setCurrentParameters(QList<QVariant> parameters) { this->currentParameters = parameters; }
 
 	void reset();
 
@@ -60,10 +61,10 @@ public:
 	void render(GLfloat *projectionMatrix, GLfloat *modelviewMatrix);
 
 	QPointF invertY(QPointF point);
-	Anchor *addAnchor(QMatrix4x4 matrix, QMatrix4x4 noScalingMatrix, QList<qreal> parameters = QList<qreal>(), QList<QString> parameterNames = QList<QString>());
-	Anchor *addAnchor(QVector3D position, QList<qreal> parameters = QList<qreal>(), QList<QString> parameterNames = QList<QString>());
-	Selection *createSelection(QMatrix4x4 matrix, QMatrix4x4 noScalingMatrix, QList<qreal> parameters, QList<QString> parameterNames);
-	Selection *createSelection(QVector3D position, QList<qreal> parameters, QList<QString> parameterNames);
+	Anchor *addAnchor(QMatrix4x4 matrix, QMatrix4x4 noScalingMatrix, QList<QVariant> parameters = QList<QVariant>(), QList<QString> parameterNames = QList<QString>());
+	Anchor *addAnchor(QVector3D position, QList<QVariant> parameters = QList<QVariant>(), QList<QString> parameterNames = QList<QString>());
+	Selection *createSelection(QMatrix4x4 matrix, QMatrix4x4 noScalingMatrix, QList<QVariant> parameters, QList<QString> parameterNames);
+	Selection *createSelection(QVector3D position, QList<QVariant> parameters, QList<QString> parameterNames);
 	bool isIntegratedViewRegistered(QString id);
 	void registerIntegratedView(QGLFramebufferObject *givenFbo, QWidget *integratedView, QString id);
 	bool addIntegratedView(Selection *selection, QString id);
@@ -75,8 +76,8 @@ public:
 	void selectLastSelection();
 	bool selectSelection(int x, int y);
 	int anchorOnPosition(int x, int y);
-	void animateToAnchor(QMatrix4x4 matrix, QList<qreal> parameters, int anchorId);
-	void animateToAnchorParameters(QList<qreal> parameters, int anchorId);
+	void animateToAnchor(QMatrix4x4 matrix, QList<QVariant> parameters, int anchorId);
+	void animateToAnchorParameters(QList<QVariant> parameters, int anchorId);
 	void animateToAnchorParameters(int anchorId);
 	bool showAnchorThumbnail(int anchorId);
 	bool injectEvent(QEvent *event, QPoint pos);
@@ -170,9 +171,11 @@ protected:
 	void prepareIntegratedViewFbo(qreal animation, int position);
 
 //private:
+	QEasingCurve easingCurve;
+
 	QList<QList<int> > clusters;
 
-	QList<qreal> currentParameters;
+	QList<QVariant> currentParameters;
 	QMatrix4x4 currentMatrix;
 
 	GLdouble projectionMatrix[16];
@@ -190,7 +193,7 @@ protected:
 	QTimer *interpolationTimer;
 	qreal interpolationAnimation;
 	QMatrix4x4 matrixFrom, matrixTo;
-	QList<qreal> parametersFrom, parametersTo;
+	QList<QVariant> parametersFrom, parametersTo;
 
 	QTimer *maximizeTimer;
 	qreal maximizeAnimation;
@@ -263,7 +266,7 @@ protected:
 	bool integratedViewsVisible;
 
 signals:
-	void parametersChanged(QList<qreal>);
+	void parametersChanged(QList<QVariant>);
 	void matrixChanged(QMatrix4x4);
 	void updated();
 
@@ -273,6 +276,7 @@ signals:
 	void arraysFinished();
 
 public slots:
+	void setEasingCurve(QEasingCurve::Type type);
 	void animate();
 	void animateSlide();
 	void animateMaximize();

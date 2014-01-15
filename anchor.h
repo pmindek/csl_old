@@ -17,9 +17,9 @@ public:
 	void setId(int id);
 	int getId();
 
-	QList<qreal> getParameters();
+	QList<QVariant> getParameters();
 	QList<QString> getParameterNames();
-	void setParameters(QList<qreal> parameters, QList<QString> parameterNames);
+	void setParameters(QList<QVariant> parameters, QList<QString> parameterNames);
 
 	QMatrix4x4 getNoScalingMatrix();
 	void setNoScalingMatrix(QMatrix4x4 noScalingMatrix);
@@ -68,7 +68,7 @@ private:
 	QVector2D screenCenterPosition;
 	qreal z;
 
-	QList<qreal> parameters;
+	QList<QVariant> parameters;
 	QList<QString> parameterNames;
 	QList<Selection *> selections;
 

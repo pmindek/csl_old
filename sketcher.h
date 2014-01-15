@@ -39,7 +39,7 @@ public:
 	void renderSelection(QGLShaderProgram *shader, Selection *selection);
 	void renderLastSelection(QGLShaderProgram *shader);
 
-	qreal getMaximumDistance(QList<qreal> parameters);
+	qreal getMaximumDistance(QList<QVariant> parameters);
 
 	void setSelections(QList<Selection *> selections);
 	QList<Selection *> &getSelections();

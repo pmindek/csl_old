@@ -1342,7 +1342,7 @@ void Presentation::render(GLfloat *projectionMatrix, GLfloat *modelviewMatrix)
 	glPopAttrib();
 }
 
-Anchor* Presentation::addAnchor(QMatrix4x4 matrix, QMatrix4x4 noScalingMatrix, QList<qreal> parameters, QList<QString> parameterNames)
+Anchor* Presentation::addAnchor(QMatrix4x4 matrix, QMatrix4x4 noScalingMatrix, QList<QVariant> parameters, QList<QString> parameterNames)
 {
 	QGLFramebufferObject *baseScreenshot = new QGLFramebufferObject(this->inputFbo->width(), this->inputFbo->height());
 	QGLFramebufferObject *screenshot = new QGLFramebufferObject(this->inputFbo->width(), this->inputFbo->height());
@@ -1364,7 +1364,7 @@ Anchor* Presentation::addAnchor(QMatrix4x4 matrix, QMatrix4x4 noScalingMatrix, Q
 	return anchor;
 }
 
-Anchor* Presentation::addAnchor(QVector3D position, QList<qreal> parameters, QList<QString> parameterNames)
+Anchor* Presentation::addAnchor(QVector3D position, QList<QVariant> parameters, QList<QString> parameterNames)
 {
 	QGLFramebufferObject *baseScreenshot = new QGLFramebufferObject(this->inputFbo->width(), this->inputFbo->height());
 	QGLFramebufferObject *screenshot = new QGLFramebufferObject(this->inputFbo->width(), this->inputFbo->height());
@@ -1390,7 +1390,7 @@ Sketcher *Presentation::getSketcher()
 	return this->sketcher;
 }
 
-Selection *Presentation::createSelection(QMatrix4x4 matrix, QMatrix4x4 noScalingMatrix, QList<qreal> parameters, QList<QString> parameterNames)
+Selection *Presentation::createSelection(QMatrix4x4 matrix, QMatrix4x4 noScalingMatrix, QList<QVariant> parameters, QList<QString> parameterNames)
 {
 	Selection *selection = this->sketcher->createSelection(this->outputFbo->width(), this->outputFbo->height());
 
@@ -1412,7 +1412,7 @@ QPointF Presentation::invertY(QPointF point)
 	return QPointF(point.x(), this->outputFbo->height() - point.y());
 }
 
-Selection *Presentation::createSelection(QVector3D position, QList<qreal> parameters, QList<QString> parameterNames)
+Selection *Presentation::createSelection(QVector3D position, QList<QVariant> parameters, QList<QString> parameterNames)
 {
 	glPushAttrib(GL_ALL_ATTRIB_BITS);
 	glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
@@ -1702,7 +1702,7 @@ int Presentation::findAnchor(int anchorId)
 	return -1;
 }
 
-void Presentation::animateToAnchor(QMatrix4x4 matrix, QList<qreal> parameters, int anchorId)
+void Presentation::animateToAnchor(QMatrix4x4 matrix, QList<QVariant> parameters, int anchorId)
 {
 	if (this->interpolationTimer->isActive())
 		return;
@@ -1737,7 +1737,7 @@ void Presentation::animateToAnchor(QMatrix4x4 matrix, QList<qreal> parameters, i
 	this->interpolationTimer->start(10);
 }
 
-void Presentation::animateToAnchorParameters(QList<qreal> parameters, int anchorId)
+void Presentation::animateToAnchorParameters(QList<QVariant> parameters, int anchorId)
 {
 	int index = this->findAnchor(anchorId);
 	if (index < 0)
@@ -1881,6 +1881,11 @@ void Presentation::renderLastSelection(QGLShaderProgram *shader)
 	this->getSketcher()->renderLastSelection(shader);
 }
 
+void Presentation::setEasingCurve(QEasingCurve::Type type)
+{
+	this->easingCurve.setType(type);
+}
+
 void Presentation::animate()
 {
 	this->interpolationAnimation += 0.04;
@@ -1897,13 +1902,13 @@ void Presentation::animate()
 		}
 	}
 
-	QMatrix4x4 matrix = PRSUtil::mix(matrixFrom, matrixTo, pow(this->interpolationAnimation, 0.5));
+	QMatrix4x4 matrix = PRSUtil::mix(matrixFrom, matrixTo, easingCurve.valueForProgress(this->interpolationAnimation));
 
-	QList<qreal> interpolated;
+	QList<QVariant> interpolated;
 
 	for (int i = 0; i < this->parametersFrom.count(); i++)
 	{
-		interpolated << PRSUtil::mix(this->parametersFrom[i], this->parametersTo[i], pow(this->interpolationAnimation, 0.5));
+		interpolated << PRSUtil::mix(this->parametersFrom[i], this->parametersTo[i], easingCurve.valueForProgress(this->interpolationAnimation));
 	}
 
 	/*
@@ -2137,7 +2142,7 @@ bool Presentation::save(QString directory)
 				{
 					writer.writeStartElement("parameter");
 						writer.writeAttribute("name", this->anchors[i]->getParameterNames()[j]);
-						writer.writeCharacters(QString::number(this->anchors[i]->getParameters()[j]));
+						writer.writeCharacters(QString::number(this->anchors[i]->getParameters()[j].toReal()));
 					writer.writeEndElement();
 				}
 			writer.writeEndElement();
@@ -2235,7 +2240,7 @@ bool Presentation::load(QString directory)
 
 	Anchor *anchor;
 	QMatrix4x4 matrix;
-	QList<qreal> parameters;
+	QList<QVariant> parameters;
 	QList<QString> parameterNames;
 
 	//parse anchors.xml

@@ -50,7 +50,7 @@ QList<SelectionPoint> &Selection::getPoints()
 	this->parameterNames << parameterName;
 }
 
-void Selection::setParameters(QList<qreal> parameters, QList<QString> parameterNames)
+void Selection::setParameters(QList<QVariant> parameters, QList<QString> parameterNames)
 {
 	this->parameters = parameters;
 	this->parameterNames = parameterNames;
@@ -76,7 +76,7 @@ bool Selection::isRendered()
 	return this->rendered;
 }
 
-qreal Selection::getMaximumDistance(QList<qreal> parameters)
+qreal Selection::getMaximumDistance(QList<QVariant> parameters)
 {
 	qreal max = 0.0;
 	/*for (int i = 0; i < qMin(parameters.count(), this->parameters.count()); i++)

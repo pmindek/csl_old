@@ -114,11 +114,25 @@ qreal PRSUtil::mix(qreal a0, qreal a1, qreal x)
 	return a0 * (1.0 - x) + a1 * x;
 }
 
+QVector2D  PRSUtil::mix(QVector2D a0, QVector2D a1, qreal x)
+{
+	return QVector2D(PRSUtil::mix(a0.x(), a1.x(), x),
+					 PRSUtil::mix(a0.y(), a1.y(), x));
+}
+
 QVector3D  PRSUtil::mix(QVector3D a0, QVector3D a1, qreal x)
 {
 	return QVector3D(PRSUtil::mix(a0.x(), a1.x(), x),
 					 PRSUtil::mix(a0.y(), a1.y(), x),
 					 PRSUtil::mix(a0.z(), a1.z(), x));
+}
+
+QVector4D  PRSUtil::mix(QVector4D a0, QVector4D a1, qreal x)
+{
+	return QVector4D(PRSUtil::mix(a0.x(), a1.x(), x),
+					 PRSUtil::mix(a0.y(), a1.y(), x),
+					 PRSUtil::mix(a0.z(), a1.z(), x),
+					 PRSUtil::mix(a0.w(), a1.w(), x));
 }
 
 QMatrix4x4 PRSUtil::mix(QMatrix4x4 a0, QMatrix4x4 a1, qreal x)
@@ -194,6 +208,41 @@ QRect PRSUtil::mix(QRect a0, QRect a1, qreal x)
 				 PRSUtil::mix(a0.top(), a1.top(), x),
 				 PRSUtil::mix(a0.width(), a1.width(), x),
 				 PRSUtil::mix(a0.height(), a1.height(), x));
+}
+
+QVariant PRSUtil::mix(QVariant a0, QVariant a1, qreal x)
+{
+	QVariant result;
+	switch (a0.type())
+	{
+	default:
+	case QVariant::Double:
+		result = PRSUtil::mix(a0.toFloat(), a1.toFloat(), x);
+		break;
+	case QVariant::Int:
+		result = (int) PRSUtil::mix((qreal) a0.toInt(), (qreal) a1.toInt(), x);
+		break;
+	case QVariant::Bool:
+		result = (x >= 0.5);
+		break;
+	case QVariant::Vector2D:
+		result = QVariant::fromValue(qVariantFromValue(PRSUtil::mix(qvariant_cast<QVector2D> (a0), qvariant_cast<QVector2D> (a1), x)));
+		break;
+	case QVariant::Vector3D:
+		result = QVariant::fromValue(qVariantFromValue(PRSUtil::mix(qvariant_cast<QVector3D> (a0), qvariant_cast<QVector3D> (a1), x)));
+		break;
+	case QVariant::Vector4D:
+		result = QVariant::fromValue(qVariantFromValue(PRSUtil::mix(qvariant_cast<QVector4D> (a0), qvariant_cast<QVector4D> (a1), x)));
+		break;
+	case QVariant::Matrix4x4:
+		result = QVariant::fromValue(qVariantFromValue(PRSUtil::mix(qvariant_cast<QMatrix4x4> (a0), qvariant_cast<QMatrix4x4> (a1), x)));
+		break;
+	case QVariant::Rect:
+		result = QVariant::fromValue(qVariantFromValue(PRSUtil::mix(a0.toRect(), a1.toRect(), x)));
+		break;
+	}
+
+	return result;
 }
 
 QRectF PRSUtil::fitToSize(QSizeF size, QSizeF boundingSize)

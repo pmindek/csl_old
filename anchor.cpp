@@ -62,7 +62,7 @@ void Anchor::setMatrix(QMatrix4x4 matrix)
 	this->position = point.toVector3D();
 }
 
-QList<qreal> Anchor::getParameters()
+QList<QVariant> Anchor::getParameters()
 {
 	return this->parameters;
 }
@@ -72,7 +72,7 @@ QList<QString> Anchor::getParameterNames()
 	return this->parameterNames;
 }
 
-void Anchor::setParameters(QList<qreal> parameters, QList<QString> parameterNames)
+void Anchor::setParameters(QList<QVariant> parameters, QList<QString> parameterNames)
 {
 	this->parameters = parameters;
 	this->parameterNames = parameterNames;

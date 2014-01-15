@@ -221,7 +221,7 @@ QList<Selection *> &Sketcher::getSelections()
 	return this->selections;
 }
 
-qreal Sketcher::getMaximumDistance(QList<qreal> parameters)
+qreal Sketcher::getMaximumDistance(QList<QVariant> parameters)
 {
 	return this->selections.last()->getMaximumDistance(parameters);
 }

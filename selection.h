@@ -18,13 +18,13 @@ public:
 	void recordPoint(SelectionPoint point);
 	QList<SelectionPoint> &getPoints();
 	/*void addParameter(qreal parameter, QString parameterName = "");
-	void setParameters(QList<qreal> parameters, QList<QString> parameterNames = QList<QString>());
+	void setParameters(QList<QVariant> parameters, QList<QString> parameterNames = QList<QString>());
 	qreal getParameter(int i);
 	QString getParameterName(int i);*/
 	void setRendered(bool rendered = true);
 	bool isRendered();
 
-	qreal getMaximumDistance(QList<qreal> parameters);
+	qreal getMaximumDistance(QList<QVariant> parameters);
 
 	IntegratedView *addIntegratedView(IntegratedView *view);
 	QList<IntegratedView *> &getIntegratedViews();
@@ -36,7 +36,7 @@ private:
 	bool rendered;
 
 	QList<SelectionPoint> points;
-	/*QList<qreal> parameters;
+	/*QList<QVariant> parameters;
 	QList<QString> parameterNames;*/
 	QList<IntegratedView *> integratedViews;
 

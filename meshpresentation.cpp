@@ -47,7 +47,7 @@ void MeshPresentation::renderClusters(GLfloat *projectionMatrix, GLfloat *modelv
 
 void MeshPresentation::renderAnchor(Anchor *anchor, bool is2D)
 {
-	qreal distance = 1.0 - qAbs(this->currentParameters[0] - anchor->getParameters()[0]);
+	qreal distance = 1.0 - qAbs(this->currentParameters[0].toReal() - anchor->getParameters()[0].toReal());
 
 	qreal ox = anchor->getPosition().x();
 	qreal oy = anchor->getPosition().y();

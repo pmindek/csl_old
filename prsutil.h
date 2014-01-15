@@ -58,9 +58,12 @@ public:
 
 	//interpolation methods
 	static qreal mix(qreal a0, qreal a1, qreal x);
+	static QVector2D mix(QVector2D a0, QVector2D a1, qreal x);
 	static QVector3D mix(QVector3D a0, QVector3D a1, qreal x);
+	static QVector4D mix(QVector4D a0, QVector4D a1, qreal x);
 	static QMatrix4x4 mix(QMatrix4x4 a0, QMatrix4x4 a1, qreal x);
 	static QRect mix(QRect a0, QRect a1, qreal x);
+	static QVariant mix(QVariant a0, QVariant a1, qreal x);
 
 	//other methods
 	static QRectF fitToSize(QSizeF size, QSizeF boundingSize);
